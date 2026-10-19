@@ -22,7 +22,10 @@ class StudentForm(forms.ModelForm):
             }),
             "age" : forms.NumberInput(attrs={
                 "class" : "form-control",
-                "placeholder": "Enter your Age"
+                "placeholder": "Enter your Age",
+                'min':1,
+                'max':100,
+
             }),
             "course": forms.TextInput(attrs={
                 "class" : "form-control",
@@ -30,3 +33,8 @@ class StudentForm(forms.ModelForm):
             }
             ),
         }
+    def clean_age(self):
+        age = self.cleaned_data['age']
+        if age<1 or age>100:
+            raise forms.ValidationError("Age must be between 1 and 100")
+        return age

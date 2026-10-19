@@ -41,7 +41,7 @@
                 </p>
             </div>
 
-            <a href="/admin/students/student/add/"
+            <a href="{% url 'student_create' %}"
                class="btn btn-primary">
                 + Add Student
             </a>
@@ -63,6 +63,59 @@
                 </div>
             </div>
         </div>
+        
+<!-- Search and Course Filter -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+        <form method="GET" class="row g-3 align-items-end">
+
+            <div class="col-md-6">
+                <label for="search" class="form-label">
+                    Search Student
+                </label>
+
+                <input
+                    type="text"
+                    id="search"
+                    name="q"
+                    class="form-control"
+                    placeholder="Search by name or email"
+                    value="{{ search_query }}"
+                >
+            </div>
+
+            <div class="col-md-4">
+                <label for="course" class="form-label">
+                    Filter by Course
+                </label>
+
+                <select id="course" name="course"
+                        class="form-select">
+                    <option value="">All Courses</option>
+
+                    {% for item in courses %}
+                        <option value="{{ item }}"
+                            {% if course_query == item %}selected{% endif %}>
+                            {{ item }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="col-md-2 d-flex gap-2">
+                <button type="submit" class="btn btn-primary">
+                    Search
+                </button>
+
+                <a href="{% url 'student_list' %}"
+                   class="btn btn-outline-secondary">
+                    Reset
+                </a>
+            </div>
+
+        </form>
+    </div>
+</div>
 
         <!-- Student Table -->
         <div class="card border-0 shadow-sm">
@@ -82,6 +135,7 @@
                                 <th>Age</th>
                                 <th>Course</th>
                                 <th>Enrollment Date</th>
+                                <th> Action</th>
                             </tr>
                         </thead>
 
@@ -100,10 +154,19 @@
                                         </span>
                                     </td>
                                     <td>{{ student.enrollment_date }}</td>
+                                    <td> <a href="{% url 'student_update' student.pk %}"
+                                        class="btn btn-sm btn-warning" >
+                                        Edit
+                                        </a>
+                                        <a href="{% url 'student_delete' student.pk %}"
+                                        class="btn btn-sm btn-danger">
+                                        Delete
+
+                                    </a></td>
                                 </tr>
                             {% empty %}
                                 <tr>
-                                    <td colspan="6"
+                                    <td colspan="7"
                                         class="text-center py-5">
                                         <h5>No students found</h5>
                                         <p class="text-secondary">
@@ -123,6 +186,43 @@
             </div>
         </div>
 
+<!-- Pagination -->
+{% if page_obj.paginator.num_pages > 1 %}
+    <nav class="mt-4" aria-label="Student pages">
+        <ul class="pagination justify-content-center">
+
+            <li class="page-item {% if not page_obj.has_previous %}disabled{% endif %}">
+                {% if page_obj.has_previous %}
+                    <a class="page-link"
+                       href="?q={{ search_query|urlencode }}&course={{ course_query|urlencode }}&page={{ page_obj.previous_page_number }}">
+                        Previous
+                    </a>
+                {% else %}
+                    <span class="page-link">Previous</span>
+                {% endif %}
+            </li>
+
+            <li class="page-item disabled">
+                <span class="page-link">
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                </span>
+            </li>
+
+            <li class="page-item {% if not page_obj.has_next %}disabled{% endif %}">
+                {% if page_obj.has_next %}
+                    <a class="page-link"
+                       href="?q={{ search_query|urlencode }}&course={{ course_query|urlencode }}&page={{ page_obj.next_page_number }}">
+                        Next
+                    </a>
+                {% else %}
+                    <span class="page-link">Next</span>
+                {% endif %}
+            </li>
+
+        </ul>
+    </nav>
+{% endif %}
+    
         <p class="text-center text-secondary mt-4 small">
             Student Management System | Built with Django
         </p>

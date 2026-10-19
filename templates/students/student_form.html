@@ -30,7 +30,13 @@
 
                 <div class="card border-0 shadow">
                     <div class="card-header bg-white p-4">
-                        <h2 class="fw-bold mb-1">Add New Student</h2>
+                        <h2 class="fw-bold mb-1">
+                            {% if student %}
+                            Edit student
+                            {% else %}
+                            Add New Student
+                        {% endif %}
+                    </h2>
                         <p class="text-secondary mb-0">
                             Enter the student's details below.
                         </p>
